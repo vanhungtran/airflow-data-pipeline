@@ -1,0 +1,3 @@
+# Simple requirements for standalone pipeline
+pandas>=1.5.0
+requests>=2.25.0
