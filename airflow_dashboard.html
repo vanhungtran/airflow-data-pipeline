@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airflow Data Pipeline Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dags-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .dag-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .dag-card:hover {
+            border-color: #667eea;
+        }
+        
+        .dag-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .dag-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dag-schedule {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dag-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-running {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .dag-description {
+            color: #666;
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+        
+        .quality-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .quality-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .quality-metric {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .quality-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quality-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+        
+        .files-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .file-item {
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-name {
+            font-family: monospace;
+            color: #333;
+        }
+        
+        .file-size {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🚀 Apache Airflow Dashboard</h1>
+        <p>Data Pipeline Monitoring & Management</p>
+    </header>
+    
+    <div class="container">
+        <!-- Pipeline Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>📊 Total Records</h3>
+                <div class="stat-value">150</div>
+                <div class="stat-label">Processed successfully</div>
+            </div>
+            <div class="stat-card">
+                <h3>⭐ Quality Score</h3>
+                <div class="stat-value">90.6%</div>
+                <div class="stat-label">Average data quality</div>
+            </div>
+            <div class="stat-card">
+                <h3>🔗 API Records</h3>
+                <div class="stat-value">50</div>
+                <div class="stat-label">From external APIs</div>
+            </div>
+            <div class="stat-card">
+                <h3>📄 CSV Records</h3>
+                <div class="stat-value">100</div>
+                <div class="stat-label">From CSV files</div>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Success Rate</h3>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Pipeline execution</div>
+            </div>
+            <div class="stat-card">
+                <h3>⏱️ Last Run</h3>
+                <div class="stat-value">2m</div>
+                <div class="stat-label">ago</div>
+            </div>
+        </div>
+        
+        <!-- DAGs Section -->
+        <div class="dags-section">
+            <h2 class="section-title">
+                <span class="icon">📋</span>
+                Data Pipeline DAGs
+            </h2>
+            
+            <div class="dag-card">
+                <div class="dag-header">
+                    <div>
+                        <div class="dag-name">data_engineering_pipeline</div>
+                        <div class="dag-schedule">Schedule: Daily at 6:00 AM UTC</div>
+                    </div>
+                    <div class="dag-status status-success">Success</div>
+                </div>
+                <div class="dag-description">
+                    Complete ETL pipeline with data extraction, transformation, and loading.
+                    Includes multi-source data extraction, validation, and error handling.
+                </div>
+            </div>
+            
+            <div class="dag-card">
+                <div class="dag-header">
+                    <div>
+                        <div class="dag-name">data_backup_pipeline</div>
+                        <div class="dag-schedule">Schedule: Weekly on Sundays at 2:00 AM UTC</div>
+                    </div>
+                    <div class="dag-status status-success">Success</div>
+                </div>
+                <div class="dag-description">
+                    Automated data backup and archival system. Creates backups and archives old files (>90 days).
+                </div>
+            </div>
+            
+            <div class="dag-card">
+                <div class="dag-header">
+                    <div>
+                        <div class="dag-name">data_quality_monitoring</div>
+                        <div class="dag-schedule">Schedule: Every 4 hours</div>
+                    </div>
+                    <div class="dag-status status-running">Running</div>
+                </div>
+                <div class="dag-description">
+                    Continuous data quality monitoring and alerting. Monitors completeness, accuracy, and freshness.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Quality Section -->
+        <div class="quality-section">
+            <h2 class="section-title">
+                <span class="icon">🔍</span>
+                Data Quality Metrics
+            </h2>
+            
+            <div class="quality-metrics">
+                <div class="quality-metric">
+                    <div class="quality-score">94.3%</div>
+                    <div class="quality-label">Completeness</div>
+                </div>
+                <div class="quality-metric">
+                    <div class="quality-score">98.9%</div>
+                    <div class="quality-label">Accuracy</div>
+                </div>
+                <div class="quality-metric">
+                    <div class="quality-score">94.6%</div>
+                    <div class="quality-label">Consistency</div>
+                </div>
+                <div class="quality-metric">
+                    <div class="quality-score">99.0%</div>
+                    <div class="quality-label">Timeliness</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Generated Files Section -->
+        <div class="files-section">
+            <h2 class="section-title">
+                <span class="icon">📁</span>
+                Generated Files
+            </h2>
+            
+            <div class="file-list">
+                <div class="file-item">
+                    <span class="file-name">📊 final_data.csv</span>
+                    <span class="file-size">25.2 KB</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">📈 pipeline_summary.json</span>
+                    <span class="file-size">1.0 KB</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">🔍 quality_metrics.json</span>
+                    <span class="file-size">270 B</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">📋 validation_results.json</span>
+                    <span class="file-size">224 B</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">💾 backup_20250925_160139/</span>
+                    <span class="file-size">25.2 KB</span>
+                </div>
+            </div>
+            
+            <button class="refresh-btn" onclick="refreshData()">
+                🔄 Refresh Pipeline Data
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function refreshData() {
+            // Simulate data refresh
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.innerHTML = '⏳ Refreshing...';
+            refreshBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Update timestamp
+                const lastRunValue = document.querySelector('.stats-grid .stat-card:nth-child(6) .stat-value');
+                lastRunValue.textContent = 'Just now';
+                
+                // Reset button
+                refreshBtn.innerHTML = '🔄 Refresh Pipeline Data';
+                refreshBtn.disabled = false;
+                
+                // Show success message
+                alert('✅ Pipeline data refreshed successfully!');
+            }, 2000);
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            const lastRunValue = document.querySelector('.stats-grid .stat-card:nth-child(6) .stat-value');
+            const currentText = lastRunValue.textContent;
+            
+            if (currentText === 'Just now') {
+                lastRunValue.textContent = '30s';
+            } else if (currentText === '30s') {
+                lastRunValue.textContent = '1m';
+            } else if (currentText === '1m') {
+                lastRunValue.textContent = '1.5m';
+            } else if (currentText === '1.5m') {
+                lastRunValue.textContent = '2m';
+            }
+        }, 30000);
+        
+        // Add click handlers to DAG cards
+        document.querySelectorAll('.dag-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const dagName = card.querySelector('.dag-name').textContent;
+                alert(`🎯 Opening DAG: ${dagName}\n\n(In a real Airflow setup, this would open the DAG details page with task logs, execution history, and manual trigger options)`);
+            });
+        });
+        
+        // Add click handlers to file items
+        document.querySelectorAll('.file-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const fileName = item.querySelector('.file-name').textContent;
+                alert(`📂 Opening file: ${fileName}\n\n(In a real setup, this would download or display the file contents)`);
+            });
+        });
+    </script>
+</body>
+</html>
