@@ -1,0 +1,31 @@
+# Apache Airflow Core
+apache-airflow==2.7.3
+
+# Data Processing
+pandas==2.0.3
+numpy==1.24.3
+
+# HTTP Requests
+requests==2.31.0
+
+# Database Connectors
+psycopg2-binary==2.9.7
+pymysql==1.1.0
+sqlalchemy==2.0.19
+
+# Cloud Storage
+boto3==1.28.57
+google-cloud-storage==2.10.0
+azure-storage-blob==12.17.0
+
+# Monitoring and Logging
+prometheus-client==0.17.1
+
+# Development Tools
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0
+
+# Additional Utilities
+python-dotenv==1.0.0
+pyyaml==6.0.1
