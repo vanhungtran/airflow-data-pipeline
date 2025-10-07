@@ -18,7 +18,19 @@ python launch_dashboard.py
 
 **✨ That's it! Your pipeline is now running with a professional web dashboard.**
 
-### 🌐 **Option 2: Network-Based Processing (if connectivity available)**
+### � **Option 2: Medical Data Pipeline (SecuTrial Integration)**
+```powershell
+# Run specialized medical data processing
+python simplified_medical_pipeline.py
+
+# Processes medical records with:
+# - Treatment duration analysis
+# - BMI calculations
+# - Patient outcome tracking
+# - Treatment effectiveness analysis
+```
+
+### �🌐 **Option 3: Network-Based Processing (if connectivity available)**
 ```powershell
 # Install minimal dependencies
 pip install pandas requests
@@ -30,7 +42,7 @@ python simple_pipeline.py
 python view_results.py
 ```
 
-### 🎯 **Option 3: Full Airflow Setup (Advanced)**
+### 🎯 **Option 4: Full Airflow Setup (Advanced)**
 ```powershell
 # Set environment variables (Windows)
 $env:AIRFLOW_HOME = "C:\temp\airflow"
@@ -65,10 +77,35 @@ airflow scheduler                 # In second terminal
 - **Quality Report**: `C:\temp\airflow\monitoring\quality_metrics.json`
 - **Pipeline Summary**: `C:\temp\airflow\summary\pipeline_summary.json`
 - **Data Backups**: `C:\temp\airflow\backups\`
+- **Medical Data**: `C:\temp\airflow\medical\` (when using medical pipeline)
+
+### 🧹 **Clean Data Exports** (NEW!)
+- **Clean Data CSV**: `C:\temp\airflow\exports\clean_data\clean_data_*.csv`
+- **Clean Data JSON**: `C:\temp\airflow\exports\clean_data\clean_data_*.json`
+- **High-Quality Data**: `C:\temp\airflow\exports\clean_data\high_quality_data_*.csv`
+- **Data Summary Report**: `C:\temp\airflow\exports\reports\data_summary_*.json`
+- **Medical Clean Data**: `C:\temp\airflow\exports\clean_medical_data\clean_patients_*.csv`
+- **Treatment Outcomes**: `C:\temp\airflow\exports\clean_medical_data\treatment_outcomes_*.csv`
+- **Medical Analysis Report**: `C:\temp\airflow\exports\medical_reports\medical_analysis_report_*.json`
+
+### 🏥 **Medical Data Processing Features**
+- **SecuTrial Integration**: Based on Jupyter notebook preprocessing logic
+- **Treatment Analysis**: Duration analysis and effectiveness tracking
+- **Patient Records**: BMI calculations and outcome monitoring
+- **Quality Validation**: 100% data quality score with comprehensive checks
+- **Standard Library**: No external dependencies required
+
+### 🧹 **Clean Data Export Features** (NEW!)
+- **Multi-format Export**: CSV and JSON formats for all datasets
+- **Data Quality Filtering**: High-quality records with complete data
+- **Medical Data Cleaning**: Patient records with standardized fields
+- **Treatment Outcomes**: Processed effectiveness analysis results
+- **Summary Reports**: Comprehensive data analysis and statistics
+- **Zero Dependencies**: Uses only Python standard library for exports
 
 ## 🚀 Pipeline Overview
 
-The pipeline consists of three main DAGs:
+The system now includes **four main processing pipelines**:
 
 ### 1. Data Engineering Pipeline (`data_pipeline_dag.py`)
 - **Schedule**: Daily at 6:00 AM UTC
@@ -97,6 +134,17 @@ The pipeline consists of three main DAGs:
   - Data freshness monitoring
   - Quality score calculation
   - Automated alerting
+
+### 4. Medical Data Pipeline (`simplified_medical_pipeline.py`)
+- **Schedule**: On-demand execution
+- **Purpose**: SecuTrial-based medical data processing and analysis
+- **Features**:
+  - Patient record management
+  - Treatment duration analysis
+  - BMI calculations and health metrics
+  - Treatment effectiveness tracking
+  - Medical data quality validation
+  - No external dependencies required
 
 ## 📋 Prerequisites
 
