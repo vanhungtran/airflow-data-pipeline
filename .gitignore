@@ -63,3 +63,6 @@ logs/
 input.csv
 *.csv
 *.ipynb
+
+# Specific notebook to keep local only
+input/Jupyter_Secutrial_preprocessing_ALL_update_treatment_duration_new_2025Aug19.ipynb
